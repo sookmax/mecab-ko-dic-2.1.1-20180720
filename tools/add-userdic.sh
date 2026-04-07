@@ -1,14 +1,11 @@
 #!/bin/bash
 
-readonly PROG_NAME=$(basename $0)
-if [ -n "`which greadlink`" ]; then   # for macOS
-    readonly PROG_DIR=$(greadlink -m $(dirname $0)) # if not installed: `brew install coreutils`
-else
-    readonly PROG_DIR=$(readlink -m $(dirname $0))
-fi
-readonly DIC_PATH=$PROG_DIR/..
+readonly SCRIPT_PATH=$(realpath "$0")
+readonly SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+readonly DIC_PATH=$(realpath "$SCRIPT_DIR/..")
+readonly BUILD_PATH=$(realpath "$DIC_PATH/../../build")
 readonly USERDIC_PATH=${DIC_PATH}/user-dic
-readonly MECAB_EXEC_PATH=/usr/local/libexec/mecab
+readonly MECAB_EXEC_PATH=${BUILD_PATH}/libexec/mecab
 readonly DICT_INDEX=$MECAB_EXEC_PATH/mecab-dict-index
 
 get_userdics() {
@@ -27,7 +24,7 @@ gen_cost() {
         -u ${DIC_PATH}/user-${input_dic} \
         -f utf-8 \
         -t utf-8 \
-        -a ${USERDIC_PATH}/$input_dic
+        -a ${USERDIC_PATH}/${input_dic}
 }
 
 compile() {
